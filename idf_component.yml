@@ -1,0 +1,12 @@
+version: "1.0.0"
+description: Emote Gen GFX — mount emote_gen mmap packs and play clips on esp_emote_gfx (gfx_anim, now/fade handoff APIs).
+url: https://github.com/espressif2022/esp_emote_gfx
+dependencies:
+  idf:
+    version: ">=5.0"
+  esp_emote_gfx_main:
+    version: '*'
+    override_path: '../esp_emote_gfx_main'
+  esp_mmap_assets:
+    version: '*'
+    public: true

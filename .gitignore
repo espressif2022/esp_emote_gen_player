@@ -1,0 +1,8 @@
+# Prebuilt mmap packs (fetched in CMake to build/prebuilt/ or supplied locally)
+test_apps/assets_gen/*.bin
+
+# ESP-IDF build output (if opened from repo root)
+test_apps/build/
+test_apps/sdkconfig
+test_apps/sdkconfig.old
+test_apps/managed_components/

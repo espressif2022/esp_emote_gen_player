@@ -1,0 +1,26 @@
+dependencies:
+  button:
+    public: true
+    version: ^2.5
+  esp_codec_dev:
+    public: true
+    version: ~1.1
+  esp_lcd_touch_tt21100: ^1
+  espressif/esp_lvgl_port:
+    public: true
+    version: ^2
+  icm42670:
+    public: true
+    version: ^1
+  idf: '>=4.4.5,<6.0'
+description: Board Support Package (BSP) for ESP-BOX
+repository: git://github.com/espressif/esp-bsp.git
+repository_info:
+  commit_sha: 342492186688ddb9469387528912d5312ab075d4
+  path: bsp/esp-box
+tags:
+- bsp
+targets:
+- esp32s3
+url: https://github.com/espressif/esp-bsp/tree/master/bsp/esp-box
+version: 3.1.0~2

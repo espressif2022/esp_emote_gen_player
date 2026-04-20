@@ -1,0 +1,26 @@
+## IDF Component Manager Manifest File
+dependencies:
+  idf: ">=5.0"
+
+  esp_emote_gen_player:
+    path: ../..
+
+  espressif/esp-box:
+    version: "*"
+    rules:
+      - if: "${IDF_TARGET} == esp32s3"
+
+  espressif/esp32_c3_lcdkit:
+    version: "^1.1.*"
+    rules:
+      - if: "${IDF_TARGET} == esp32c3"
+
+  espressif/esp_wrover_kit:
+    version: "^1.6.*"
+    rules:
+      - if: "${IDF_TARGET} == esp32"
+
+  espressif/esp32_p4_function_ev_board_noglib:
+    version: "*"
+    rules:
+      - if: "${IDF_TARGET} == esp32p4"
