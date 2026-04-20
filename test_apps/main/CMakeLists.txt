@@ -11,7 +11,6 @@ idf_component_register(
     SRCS ${MAIN_SRCS}
     INCLUDE_DIRS "."
     WHOLE_ARCHIVE
-    REQUIRES unity esp_emote_gen_player esp_emote_gfx_main
 )
 
 set(EMOTE_ASSETS_URL "https://dl.espressif.com/AE/emote_assets.bin")

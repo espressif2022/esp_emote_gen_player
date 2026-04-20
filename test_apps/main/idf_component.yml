@@ -3,7 +3,8 @@ dependencies:
   idf: ">=5.0"
 
   esp_emote_gen_player:
-    path: ../..
+    version: "*"
+    override_path: ../../
 
   espressif/esp-box:
     version: "*"

@@ -1,6 +1,6 @@
 # Emote Gen GFX — test application
 
-Standalone ESP-IDF project that exercises **Emote Gen GFX** (`esp_emote_gen_player`) on real hardware (ESP-Box / P4 EVB, etc.), same asset scenario as `esp_emote_gfx_main` **`test_anim_emote_gen`**.
+Standalone ESP-IDF project that exercises **Emote Gen GFX** (`esp_emote_gen_player`) on real hardware (ESP-Box / P4 EVB, etc.), same asset scenario as `esp_emote_gfx` **`test_anim_emote_gen`**.
 
 ## Build
 

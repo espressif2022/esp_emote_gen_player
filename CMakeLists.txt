@@ -1,5 +1,5 @@
 set(COMPONENT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(COMPONENT_REQUIRES json esp_mmap_assets esp_emote_gfx_main)
+set(COMPONENT_REQUIRES json)
 
 idf_component_register(
     SRCS

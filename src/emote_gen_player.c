@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -94,13 +95,13 @@ static esp_err_t emote_gen_player_apply_segments(gfx_obj_t *obj, const emote_gen
         segments[2].play_count = 1;
         segments[2].end_action = GFX_ANIM_SEGMENT_ACTION_CONTINUE;
 
-        ESP_LOGI("", "[0] segments: [%d, %d], (fps:%d, play_count:%d, action:%s)",
+        ESP_LOGD(TAG, "[0] segments: [%" PRIu32 ", %" PRIu32 "], (fps:%" PRIu32 ", play_count:%" PRIu32 ", action:%s)",
                  segments[0].start, segments[0].end, segments[0].fps, segments[0].play_count,
                  emote_gen_player_segment_action_str(segments[0].end_action));
-        ESP_LOGI("", "[1] segments: [%d, %d], (fps:%d, play_count:%d, action:%s)",
+        ESP_LOGD(TAG, "[1] segments: [%" PRIu32 ", %" PRIu32 "], (fps:%" PRIu32 ", play_count:%" PRIu32 ", action:%s)",
                  segments[1].start, segments[1].end, segments[1].fps, segments[1].play_count,
                  emote_gen_player_segment_action_str(segments[1].end_action));
-        ESP_LOGI("", "[2] segments: [%d, %d], (fps:%d, play_count:%d, action:%s)",
+        ESP_LOGD(TAG, "[2] segments: [%" PRIu32 ", %" PRIu32 "], (fps:%" PRIu32 ", play_count:%" PRIu32 ", action:%s)",
                  segments[2].start, segments[2].end, segments[2].fps, segments[2].play_count,
                  emote_gen_player_segment_action_str(segments[2].end_action));
 
@@ -118,16 +119,17 @@ static esp_err_t emote_gen_player_apply_segments(gfx_obj_t *obj, const emote_gen
         segments[1].play_count = 1;
         segments[1].end_action = GFX_ANIM_SEGMENT_ACTION_CONTINUE;
 
-        ESP_LOGI("", "[0] segments: [%d, %d], (fps:%d, play_count:%d, action:%s)",
+        ESP_LOGD(TAG, "[0] segments: [%" PRIu32 ", %" PRIu32 "], (fps:%" PRIu32 ", play_count:%" PRIu32 ", action:%s)",
                  segments[0].start, segments[0].end, segments[0].fps, segments[0].play_count,
                  emote_gen_player_segment_action_str(segments[0].end_action));
-        ESP_LOGI("", "[1] segments: [%d, %d], (fps:%d, play_count:%d, action:%s)",
+        ESP_LOGD(TAG, "[1] segments: [%" PRIu32 ", %" PRIu32 "], (fps:%" PRIu32 ", play_count:%" PRIu32 ", action:%s)",
                  segments[1].start, segments[1].end, segments[1].fps, segments[1].play_count,
                  emote_gen_player_segment_action_str(segments[1].end_action));
 
         return gfx_anim_set_segments(obj, segments, 2);
     } else {
-        ESP_LOGI("", "[0] segments: [%d, %d], (fps:%d, play_count:%d)", 0, 0xFFFFFFFF, 50, 1);
+        ESP_LOGD(TAG, "[0] segments: [%" PRIu32 ", %" PRIu32 "], (fps:%" PRIu32 ", play_count:%" PRIu32 ")",
+                 (uint32_t)0, UINT32_MAX, (uint32_t)50, (uint32_t)1);
     }
 
     return gfx_anim_set_segment(obj, 0, 0xFFFFFFFF, fps, false);
@@ -188,13 +190,6 @@ static esp_err_t emote_gen_player_apply_anim_by_index(emote_gen_player_handle_t 
 
     handle->current_index = index;
     handle->has_active_anim = true;
-
-    if (handle->tip_label != NULL) {
-        esp_err_t lr = gfx_label_set_text(handle->tip_label, entry->name);
-        if (lr != ESP_OK) {
-            ESP_LOGW(TAG, "tip strip set_text failed: %s", esp_err_to_name(lr));
-        }
-    }
 
     return ESP_OK;
 }
@@ -359,7 +354,7 @@ static esp_err_t emote_gen_player_configure_anim(gfx_obj_t *obj, const emote_gen
 
     ESP_RETURN_ON_ERROR(gfx_anim_set_auto_mirror(obj, false), TAG, "gfx_anim_set_auto_mirror failed");
 
-    if (spec->x == 0 && spec->y == 0) {
+    if (!spec->has_xy && spec->x == 0 && spec->y == 0) {
         ESP_RETURN_ON_ERROR(gfx_obj_align(obj, GFX_ALIGN_CENTER, 0, 0), TAG, "gfx_obj_align failed");
     } else {
         ESP_RETURN_ON_ERROR(gfx_obj_set_pos(obj, spec->x, spec->y), TAG, "gfx_obj_set_pos failed");
