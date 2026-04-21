@@ -60,6 +60,7 @@ typedef struct {
     int32_t loop_end;       /**< Loop segment end frame when `has_loop_range`. */
     bool has_stop_frame;    /**< If true, use `stop_frame` segment plan. */
     bool has_loop_range;    /**< If true, use intro + loop + tail segment plan. */
+    bool has_xy;            /**< If true, `x`/`y` come from index (use even when both are 0). If false and both are 0, center. */
 } emote_gen_player_play_spec_t;
 
 /**

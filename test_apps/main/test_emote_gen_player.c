@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <inttypes.h>
+
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
@@ -100,9 +102,10 @@ static void test_anim_index_log(emote_gen_player_handle_t player)
     for (size_t i = 0; i < index_count; i++) {
         const emote_gen_player_index_entry_t *e = emote_gen_player_get_index_entry(player, i);
         TEST_ASSERT_NOT_NULL(e);
-        ESP_LOGI("", "index[%2zu] name:%-20s pos:(%2d,%2d) stop:%3d has_loop:%d loop:[%3d,%3d]",
-                 i, e->name, e->play.x, e->play.y, e->play.stop_frame, (int)e->play.has_loop_range, e->play.loop_start,
-                 e->play.loop_end);
+        ESP_LOGI(TAG,
+                 "index[%2zu] name:%-20s pos:(%" PRIi16 ",%" PRIi16 ") has_xy:%d stop:%" PRIi32 " has_loop:%d loop:[%" PRIi32 ",%" PRIi32 "]",
+                 i, e->name, e->play.x, e->play.y, (int)e->play.has_xy, e->play.stop_frame, (int)e->play.has_loop_range,
+                 e->play.loop_start, e->play.loop_end);
     }
     ESP_LOGI(TAG, "index.json: loaded %zu entries", index_count);
 }

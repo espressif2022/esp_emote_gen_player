@@ -53,9 +53,9 @@ static void test_player_update_callback(gfx_disp_event_t event, const void *obj,
 {
     (void)manager;
     (void)obj;
-    if (event == GFX_DISP_EVENT_PART_DONE) {
+    if (event == GFX_DISP_EVENT_PART_FRAME_DONE) {
         ESP_LOGD("", "part done(%p): event:%d", obj, event);
-    } else if (event == GFX_DISP_EVENT_ALL_DONE) {
+    } else if (event == GFX_DISP_EVENT_ALL_FRAME_DONE) {
         ESP_LOGD("", "all done(%p): event:%d", obj, event);
     }
 }

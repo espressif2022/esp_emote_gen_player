@@ -61,9 +61,11 @@ static esp_err_t emote_gen_player_parse_index_json_array(const char *json, size_
         }
         if (cJSON_IsNumber(json_x)) {
             entry->play.x = (int16_t)json_x->valueint;
+            entry->play.has_xy = true;
         }
         if (cJSON_IsNumber(json_y)) {
             entry->play.y = (int16_t)json_y->valueint;
+            entry->play.has_xy = true;
         }
         if (cJSON_IsArray(json_loop)) {
             int loop_size = cJSON_GetArraySize(json_loop);
