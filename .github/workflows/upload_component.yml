@@ -3,7 +3,7 @@ name: Push components to Espressif Component Service
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   upload_components:
