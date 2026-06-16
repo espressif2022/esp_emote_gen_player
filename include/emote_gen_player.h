@@ -262,50 +262,54 @@ const emote_gen_player_index_entry_t *emote_gen_player_get_index_entry(emote_gen
  *
  * @param[in] handle  Player handle. Must not be NULL.
  * @param[in] index   Index in `[0, entry_count)`.
+ * @param[in] repeat  When true, loop the active segment plan; when false, play once.
  *
  * @return
  *        - ESP_OK on success
  *        - ESP_ERR_INVALID_ARG / ESP_ERR_INVALID_STATE / ESP_ERR_NOT_FOUND / etc. on failure
  */
-esp_err_t emote_gen_player_anim_now(emote_gen_player_handle_t handle, size_t index);
+esp_err_t emote_gen_player_anim_now(emote_gen_player_handle_t handle, size_t index, bool repeat);
 
 /**
  * @brief Switch animation immediately by logical name.
  *
  * @param[in] handle  Player handle. Must not be NULL.
  * @param[in] name    Entry `name` field; must not be NULL or empty.
+ * @param[in] repeat  When true, loop the active segment plan; when false, play once.
  *
  * @return
  *        - ESP_OK on success
  *        - ESP_ERR_NOT_FOUND if name is unknown
  *        - Other codes from @ref emote_gen_player_anim_now
  */
-esp_err_t emote_gen_player_anim_now_name(emote_gen_player_handle_t handle, const char *name);
+esp_err_t emote_gen_player_anim_now_name(emote_gen_player_handle_t handle, const char *name, bool repeat);
 
 /**
  * @brief After current segment plan drains, switch by index; tip shows new `name`.
  *
  * @param[in] handle  Player handle. Must not be NULL.
  * @param[in] index   Target index in `[0, entry_count)`.
+ * @param[in] repeat  When true, loop the active segment plan; when false, play once.
  *
  * @return
  *        - ESP_OK on success
  *        - ESP_ERR_* on invalid args, gfx drain failure, or apply failure
  */
-esp_err_t emote_gen_player_anim_fade(emote_gen_player_handle_t handle, size_t index);
+esp_err_t emote_gen_player_anim_fade(emote_gen_player_handle_t handle, size_t index, bool repeat);
 
 /**
  * @brief After current segment plan drains, switch by logical name.
  *
  * @param[in] handle  Player handle. Must not be NULL.
  * @param[in] name    Entry `name` field; must not be NULL or empty.
+ * @param[in] repeat  When true, loop the active segment plan; when false, play once.
  *
  * @return
  *        - ESP_OK on success
  *        - ESP_ERR_NOT_FOUND if name is unknown
  *        - Other codes from @ref emote_gen_player_anim_fade
  */
-esp_err_t emote_gen_player_anim_fade_name(emote_gen_player_handle_t handle, const char *name);
+esp_err_t emote_gen_player_anim_fade_name(emote_gen_player_handle_t handle, const char *name, bool repeat);
 
 #ifdef __cplusplus
 }
