@@ -1,4 +1,4 @@
-version: "0.0.1"
+version: "0.0.2"
 license: "Apache-2.0"
 description: ESP Emote Gen Player — mount emote_gen mmap packs and play clips on esp_emote_gfx (gfx_anim, now/fade handoff APIs).
 url: "https://github.com/espressif2022/esp_emote_gen_player"
