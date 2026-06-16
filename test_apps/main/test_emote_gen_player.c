@@ -53,9 +53,9 @@ static void test_anim_switch_worker(void *arg)
         }
         ESP_LOGI(TAG, "switch task -> anim %zu (%s)", msg.index, msg.fade ? "fade" : "now");
         if (msg.fade) {
-            emote_gen_player_anim_fade(msg.player, msg.index);
+            emote_gen_player_anim_fade(msg.player, msg.index, true);
         } else {
-            emote_gen_player_anim_now(msg.player, msg.index);
+            emote_gen_player_anim_now(msg.player, msg.index, true);
         }
     }
 }
@@ -124,7 +124,7 @@ static void test_anim_run_case_emote_gen(emote_gen_player_handle_t player)
     TEST_ASSERT_NOT_NULL_MESSAGE(s_anim_switch_task_handle, "anim switch task");
 
     TEST_ASSERT_NOT_NULL_MESSAGE(emote_gen_player_get_tip_label(player), "tip label");
-    emote_gen_player_anim_now(player, 0);
+    emote_gen_player_anim_now(player, 0, true);
     /* Tip strip shows current clip name (synced inside emote_gen_player after each switch). */
     /* Next tap: same pattern as the old auto loop (index 1 with fade, then 2 with now, ...). */
     s_touch_cycle_index = 1;

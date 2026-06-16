@@ -22,14 +22,13 @@ LV_FONT_DECLARE(font_puhui_basic_20_4);
 
 static const char *TAG = "emote_gen_player";
 static const uint32_t EMOTE_GEN_PLAYER_DEFAULT_FPS = 25;
-static const uint32_t EMOTE_GEN_PLAYER_DEFAULT_LOOP_MID_PLAYS = 0;
 /** Tip strip height (px), same order of magnitude as expression emote_init. */
 static const int32_t EMOTE_GEN_PLAYER_DEF_LABEL_H = 40;
 static const uint32_t EMOTE_GEN_PLAYER_DEF_LABEL_SCROLL_SPEED = 50;
 static const uint32_t EMOTE_GEN_PLAYER_DEF_LABEL_COLOR = 0xFFFFFF;
 
 static esp_err_t emote_gen_player_configure_anim(gfx_obj_t *obj, const emote_gen_player_play_spec_t *spec,
-                                                 const void *anim_data, size_t anim_len);
+                                                 const void *anim_data, size_t anim_len, bool repeat);
 
 static const char *emote_gen_player_segment_action_str(gfx_anim_segment_action_t action)
 {
@@ -72,9 +71,10 @@ static void emote_gen_player_update_cb_wrapper(gfx_disp_t *disp, gfx_disp_event_
 }
 
 static esp_err_t emote_gen_player_apply_segments(gfx_obj_t *obj, const emote_gen_player_play_spec_t *spec, uint32_t fps,
-                                                 uint32_t loop_mid_plays)
+                                                 bool repeat)
 {
     gfx_anim_segment_t segments[3];
+    const uint32_t loop_play_count = repeat ? 0U : 1U;
 
     if (spec->has_loop_range) {
         segments[0].start = 0;
@@ -86,7 +86,7 @@ static esp_err_t emote_gen_player_apply_segments(gfx_obj_t *obj, const emote_gen
         segments[1].start = (uint32_t)spec->loop_start;
         segments[1].end = (uint32_t)spec->loop_end - 1;
         segments[1].fps = fps;
-        segments[1].play_count = loop_mid_plays;
+        segments[1].play_count = loop_play_count;
         segments[1].end_action = GFX_ANIM_SEGMENT_ACTION_CONTINUE;
 
         segments[2].start = (uint32_t)spec->loop_end;
@@ -116,7 +116,7 @@ static esp_err_t emote_gen_player_apply_segments(gfx_obj_t *obj, const emote_gen
         segments[1].start = (uint32_t)spec->stop_frame;
         segments[1].end = 0xFFFFFFFF;
         segments[1].fps = fps;
-        segments[1].play_count = 1;
+        segments[1].play_count = loop_play_count;
         segments[1].end_action = GFX_ANIM_SEGMENT_ACTION_CONTINUE;
 
         ESP_LOGD(TAG, "[0] segments: [%" PRIu32 ", %" PRIu32 "], (fps:%" PRIu32 ", play_count:%" PRIu32 ", action:%s)",
@@ -132,7 +132,7 @@ static esp_err_t emote_gen_player_apply_segments(gfx_obj_t *obj, const emote_gen
                  (uint32_t)0, UINT32_MAX, (uint32_t)50, (uint32_t)1);
     }
 
-    return gfx_anim_set_segment(obj, 0, 0xFFFFFFFF, fps, false);
+    return gfx_anim_set_segment(obj, 0, 0xFFFFFFFF, fps, repeat);
 }
 
 static esp_err_t emote_gen_player_lock(emote_gen_player_handle_t handle)
@@ -166,7 +166,7 @@ static int emote_gen_player_find_index_by_name(emote_gen_player_handle_t handle,
     return -1;
 }
 
-static esp_err_t emote_gen_player_apply_anim_by_index(emote_gen_player_handle_t handle, size_t index)
+static esp_err_t emote_gen_player_apply_anim_by_index(emote_gen_player_handle_t handle, size_t index, bool repeat)
 {
     const emote_gen_player_index_entry_t *entry;
     const void *anim_data;
@@ -184,7 +184,7 @@ static esp_err_t emote_gen_player_apply_anim_by_index(emote_gen_player_handle_t 
     ESP_RETURN_ON_FALSE(anim_data != NULL && anim_size > 0, ESP_ERR_INVALID_SIZE, TAG, "anim data is invalid");
 
     gfx_anim_stop(handle->anim_obj);
-    ESP_RETURN_ON_ERROR(emote_gen_player_configure_anim(handle->anim_obj, &entry->play, anim_data, anim_size),
+    ESP_RETURN_ON_ERROR(emote_gen_player_configure_anim(handle->anim_obj, &entry->play, anim_data, anim_size, repeat),
                         TAG, "configure anim failed");
     ESP_RETURN_ON_ERROR(gfx_anim_start(handle->anim_obj), TAG, "gfx_anim_start failed");
 
@@ -331,11 +331,10 @@ esp_err_t emote_gen_player_unmount_assets(emote_gen_player_handle_t handle)
 }
 
 static esp_err_t emote_gen_player_configure_anim(gfx_obj_t *obj, const emote_gen_player_play_spec_t *spec,
-                                                 const void *anim_data, size_t anim_len)
+                                                 const void *anim_data, size_t anim_len, bool repeat)
 {
     gfx_anim_src_t anim_src;
     uint32_t fps = EMOTE_GEN_PLAYER_DEFAULT_FPS;
-    uint32_t loop_mid_plays = EMOTE_GEN_PLAYER_DEFAULT_LOOP_MID_PLAYS;
 
     ESP_RETURN_ON_FALSE(obj != NULL, ESP_ERR_INVALID_ARG, TAG, "obj is NULL");
     ESP_RETURN_ON_FALSE(spec != NULL, ESP_ERR_INVALID_ARG, TAG, "spec is NULL");
@@ -360,7 +359,7 @@ static esp_err_t emote_gen_player_configure_anim(gfx_obj_t *obj, const emote_gen
         ESP_RETURN_ON_ERROR(gfx_obj_set_pos(obj, spec->x, spec->y), TAG, "gfx_obj_set_pos failed");
     }
 
-    return emote_gen_player_apply_segments(obj, spec, fps, loop_mid_plays);
+    return emote_gen_player_apply_segments(obj, spec, fps, repeat);
 }
 
 gfx_disp_t *emote_gen_player_get_disp(emote_gen_player_handle_t handle)
@@ -389,24 +388,24 @@ esp_err_t emote_gen_player_set_tip_text(emote_gen_player_handle_t handle, const 
     return ret;
 }
 
-esp_err_t emote_gen_player_anim_now(emote_gen_player_handle_t handle, size_t index)
+esp_err_t emote_gen_player_anim_now(emote_gen_player_handle_t handle, size_t index, bool repeat)
 {
     ESP_RETURN_ON_FALSE(handle != NULL, ESP_ERR_INVALID_ARG, TAG, "handle is NULL");
     ESP_RETURN_ON_ERROR(emote_gen_player_lock(handle), TAG, "player lock failed");
-    esp_err_t ret = emote_gen_player_apply_anim_by_index(handle, index);
+    esp_err_t ret = emote_gen_player_apply_anim_by_index(handle, index, repeat);
     emote_gen_player_unlock(handle);
     return ret;
 }
 
-esp_err_t emote_gen_player_anim_now_name(emote_gen_player_handle_t handle, const char *name)
+esp_err_t emote_gen_player_anim_now_name(emote_gen_player_handle_t handle, const char *name, bool repeat)
 {
     int index = emote_gen_player_find_index_by_name(handle, name);
 
     ESP_RETURN_ON_FALSE(index >= 0, ESP_ERR_NOT_FOUND, TAG, "anim name not found");
-    return emote_gen_player_anim_now(handle, (size_t)index);
+    return emote_gen_player_anim_now(handle, (size_t)index, repeat);
 }
 
-esp_err_t emote_gen_player_anim_fade(emote_gen_player_handle_t handle, size_t index)
+esp_err_t emote_gen_player_anim_fade(emote_gen_player_handle_t handle, size_t index, bool repeat)
 {
     esp_err_t ret;
 
@@ -414,7 +413,7 @@ esp_err_t emote_gen_player_anim_fade(emote_gen_player_handle_t handle, size_t in
     ESP_RETURN_ON_FALSE(index < handle->entry_count, ESP_ERR_INVALID_ARG, TAG, "index out of range");
 
     if (!handle->has_active_anim || handle->current_index == SIZE_MAX) {
-        return emote_gen_player_anim_now(handle, index);
+        return emote_gen_player_anim_now(handle, index, repeat);
     }
 
     if (handle->current_index == index) {
@@ -424,17 +423,17 @@ esp_err_t emote_gen_player_anim_fade(emote_gen_player_handle_t handle, size_t in
     /* gfx_anim_play_left_to_tail must not run under gfx_emote_lock */
     ret = gfx_anim_play_left_to_tail(handle->anim_obj);
     if (ret == ESP_ERR_NOT_FOUND) {
-        return emote_gen_player_anim_now(handle, index);
+        return emote_gen_player_anim_now(handle, index, repeat);
     }
     ESP_RETURN_ON_ERROR(ret, TAG, "gfx_anim_play_left_to_tail failed");
 
-    return emote_gen_player_anim_now(handle, index);
+    return emote_gen_player_anim_now(handle, index, repeat);
 }
 
-esp_err_t emote_gen_player_anim_fade_name(emote_gen_player_handle_t handle, const char *name)
+esp_err_t emote_gen_player_anim_fade_name(emote_gen_player_handle_t handle, const char *name, bool repeat)
 {
     int index = emote_gen_player_find_index_by_name(handle, name);
 
     ESP_RETURN_ON_FALSE(index >= 0, ESP_ERR_NOT_FOUND, TAG, "anim name not found");
-    return emote_gen_player_anim_fade(handle, (size_t)index);
+    return emote_gen_player_anim_fade(handle, (size_t)index, repeat);
 }
